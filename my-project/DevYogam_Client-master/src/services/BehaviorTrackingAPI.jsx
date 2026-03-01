@@ -1,7 +1,9 @@
 import axios from "axios";
 import { getUtmForTracking } from "../utils/utmTracker";
 
-const BEHAVIOR_API_URL = "http://localhost:5000/api/behavior";
+// Use environment variable for API URL, remove trailing slash to avoid double slashes
+const API_BASE = (process.env.REACT_APP_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+const BEHAVIOR_API_URL = `${API_BASE}/api/behavior`;
 
 // Create axios instance without auth (tracking is public)
 const trackingClient = axios.create({

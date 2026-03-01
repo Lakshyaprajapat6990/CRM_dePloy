@@ -135,7 +135,8 @@ async function trackBehavior(action, page, additionalData = {}) {
   };
 
   try {
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    // Remove trailing slash from API_URL to avoid double slashes
+    const API_URL = (process.env.REACT_APP_API_URL || 'http://localhost:5000').replace(/\/$/, '');
     await fetch(`${API_URL}/api/behavior/track`, {
       method: 'POST',
       headers: {
@@ -166,7 +167,8 @@ async function trackBehaviors(behaviors) {
   }));
 
   try {
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    // Remove trailing slash from API_URL to avoid double slashes
+    const API_URL = (process.env.REACT_APP_API_URL || 'http://localhost:5000').replace(/\/$/, '');
     await fetch(`${API_URL}/api/behavior/track-batch`, {
       method: 'POST',
       headers: {
