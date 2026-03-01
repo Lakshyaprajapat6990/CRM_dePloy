@@ -10,10 +10,15 @@ async function trackBehavior(req, res) {
       req.body.page = req.headers.referer || 'unknown';
     }
     
+    // If action is missing, use a default value
+    if (!req.body.action) {
+      req.body.action = 'page_view';
+    }
+    
     const behavior = await userBehaviorService.trackBehavior(req.body);
     res.status(201).json(behavior);
   } catch (err) {
-    console.error("Error tracking behavior:", err);
+    console.error("Error tracking behavior:", err.message);
     res.status(400).json({ error: err.message });
   }
 }
@@ -27,10 +32,18 @@ async function trackBehaviors(req, res) {
     if (!behaviors || !Array.isArray(behaviors)) {
       return res.status(400).json({ error: "Behaviors array is required" });
     }
-    const saved = await userBehaviorService.trackBehaviors(behaviors);
+    
+    // Add default action to each behavior if missing
+    const normalizedBehaviors = behaviors.map(b => ({
+      ...b,
+      action: b.action || 'page_view',
+      page: b.page || 'unknown',
+    }));
+    
+    const saved = await userBehaviorService.trackBehaviors(normalizedBehaviors);
     res.status(201).json({ count: saved.length, behaviors: saved });
   } catch (err) {
-    console.error("Error tracking behaviors:", err);
+    console.error("Error tracking behaviors:", err.message);
     res.status(400).json({ error: err.message });
   }
 }

@@ -11,7 +11,7 @@ const payRoutes = require("./routes/payRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const reviewsRoutes = require('./routes/reviewsRoutes')
 const crmRoutes = require('./routes/crmRoutes');
-const userBehaviorRoutes = require('./routes/userBehaviorRoutes');
+const userBehaviorRoutes = require("./routes/userBehaviorRoutes");
 const { initializeDatabase } = require('./config/initBehaviorDB');
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -19,8 +19,8 @@ const swaggerUi = require("swagger-ui-express");
 const app = express();
 
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // More permissive CORS for Vercel serverless
 app.use(cors({
@@ -71,18 +71,33 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error:", err.message);
+  res.status(500).json({ 
+    error: err.message || "Internal Server Error",
+    message: "Something went wrong"
+  });
+});
+
 // Initialize database on module load (for Vercel serverless)
 let dbPromise = null;
+let dbInitialized = false;
 
 async function initDB() {
+  if (dbInitialized) return;
+  
   if (!dbPromise) {
     dbPromise = (async () => {
       try {
         await connectDB();
         await initializeDatabase();
-        console.log("✅ Database initialized");
+        dbInitialized = true;
+        console.log("✅ Database initialized successfully");
       } catch (error) {
         console.error("❌ Database initialization error:", error.message);
+        dbInitialized = false;
+        dbPromise = null;
       }
     })();
   }
