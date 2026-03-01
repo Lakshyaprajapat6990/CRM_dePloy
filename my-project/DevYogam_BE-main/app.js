@@ -18,16 +18,13 @@ const swaggerUi = require("swagger-ui-express");
 
 const app = express();
 
-// Flag to track if DB is initialized
-let isDBInitialized = false;
-
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // More permissive CORS for Vercel serverless
 app.use(cors({
-  origin: true, // Allow all origins in production
+  origin: true,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization", "Origin", "Accept"],
@@ -44,7 +41,7 @@ const swaggerOptions = {
     info: {
       title: "Dev Yogam API",
       version: "1.0.0",
-      description: "API documentation for Dev Yogam (Users, Poojas, Temples, Payments, Files)",
+      description: "API documentation for Dev Yogam",
     },
     servers: [
       {
@@ -74,30 +71,26 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Initialize database function (for serverless - called on first request)
-const initDB = async () => {
-  if (!isDBInitialized) {
-    try {
-      await connectDB();
-      await initializeDatabase();
-      isDBInitialized = true;
-      console.log("✅ Database initialized");
-    } catch (error) {
-      console.error("❌ Database initialization error:", error.message);
-      // Don't crash - let the function handle DB errors per-request
-    }
-  }
-};
+// Initialize database on module load (for Vercel serverless)
+let dbPromise = null;
 
-// Middleware to ensure DB is initialized before handling routes
-app.use(async (req, res, next) => {
-  // Skip DB init for root and favicon
-  if (req.path === '/' || req.path === '/favicon.ico') {
-    return next();
+async function initDB() {
+  if (!dbPromise) {
+    dbPromise = (async () => {
+      try {
+        await connectDB();
+        await initializeDatabase();
+        console.log("✅ Database initialized");
+      } catch (error) {
+        console.error("❌ Database initialization error:", error.message);
+      }
+    })();
   }
-  await initDB();
-  next();
-});
+  return dbPromise;
+}
+
+// Initialize DB immediately when module loads
+initDB();
 
 // Export app for Vercel serverless functions
 module.exports = app;
