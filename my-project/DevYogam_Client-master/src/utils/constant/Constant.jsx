@@ -1,9 +1,6 @@
-// Production backend URL - Update this after deploying backend
-// Replace with your Vercel backend URL after deployment
-// export const baseURL = process.env.REACT_APP_API_BASE_URL || 'https://your-backend.vercel.app';
-
-// For local development, use localhost:
-export const baseURL = 'http://localhost:5000';
+// Production backend URL - uses environment variable for Vercel deployment
+// Falls back to localhost for local development
+export const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 export const reviewsData = [
   {
