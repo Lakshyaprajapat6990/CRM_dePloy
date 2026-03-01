@@ -28,35 +28,36 @@ app.use(express.urlencoded({ extended: true }));
     // Initialize database collections and indexes
     await initializeDatabase();
 
+    // CORS setup - Allow both localhost and production frontend
     const allowedOrigins = [
-      process.env.CLIENT_URL_LOCAL,
-      process.env.CLIENT_URL,
-      process.env.CLIENT_URL_2,
-    ];
+      "http://localhost:3000",
+      "http://localhost:5173", // Vite dev server
+      process.env.CLIENT_URL,      // Production frontend URL from .env
+      process.env.CLIENT_URL_2,   // Alternative production URL
+      process.env.VERCEL_URL,     // Vercel preview/production URL
+    ].filter(Boolean);
 
-    // CORS setup
-    // const allowedOrigins = [
-    //   "http://localhost:3000", // ✅ allow deployed frontend
-    // ];
-app.use(cors({
-  origin: "http://localhost:3000",  // frontend ka exact URL
-  credentials: true
-}));
-    // app.use(
-    //   cors({
-    //     origin: (origin, callback) => {
-    //       if (!origin) return callback(null, true); // allow curl / server-to-server
-    //       if (allowedOrigins.includes(origin)) {
-    //         callback(null, true);
-    //       } else {
-    //         callback(new Error("Not allowed by CORS"));
-    //       }
-    //     },
-    //     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    //     credentials: true,
-    //     allowedHeaders: ["Content-Type", "Authorization"],
-    //   })
-    // );
+    app.use(
+      cors({
+        origin: (origin, callback) => {
+          // Allow requests with no origin (mobile apps, curl, server-to-server)
+          if (!origin) return callback(null, true);
+          
+          if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+          } else {
+            // For Vercel deployment, allow any vercel.app domain
+            if (origin && origin.includes('.vercel.app')) {
+              return callback(null, true);
+            }
+            callback(new Error("Not allowed by CORS"));
+          }
+        },
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
+      })
+    );
 
 
     // Favicon handler (prevent 404 errors in browser)
