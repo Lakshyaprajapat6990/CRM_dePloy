@@ -14,7 +14,7 @@
     }
   ],
   "env": {
-    "MONGO_URI": "@mongo_uri",
+    "MONGO_URI": "mongodb+srv://terimakichut172_db_user:nOojFhfTNOmGWrsu@cluster0.mx4cvtr.mongodb.net/",
     "PORT": "5000"
   }
 }

@@ -296,3 +296,87 @@ http://localhost:3000/?utm_source=instagram&utm_campaign=promo
 Then check the admin dashboard to see the analytics.
 
 Is the CRM system working as expected now?
+
+
+
+All URLs of DevYogam Website:
+
+Public Routes (Accessible without login):
+
+http://localhost:3000/ - Home page
+http://localhost:3000/hi/ - Home page (Hindi)
+http://localhost:3000/pooja - Pooja list
+http://localhost:3000/hi/pooja - Pooja list (Hindi)
+http://localhost:3000/pooja-details/:name/:id - Pooja details
+http://localhost:3000/hi/pooja-details/:name/:id - Pooja details (Hindi)
+http://localhost:3000/pooja-booking/:type/:name/:id - Pooja booking
+http://localhost:3000/hi/pooja-booking/:type/:name/:id - Pooja booking (Hindi)
+http://localhost:3000/chadhava - Chadhavas list
+http://localhost:3000/hi/chadhava - Chadhavas list (Hindi)
+http://localhost:3000/chadhava-details/:name/:id - Chadharma details
+http://localhost:3000/hi/chadhava-details/:name/:id - Chadharma details (Hindi)
+http://localhost:3000/temple - Temples list
+http://localhost:3000/hi/temple - Temples list (Hindi)
+http://localhost:3000/temple-details/:name/:id - Temple details
+http://localhost:3000/hi/temple-details/:name/:id - Temple details (Hindi)
+http://localhost:3000/contact - Contact page
+http://localhost:3000/hi/contact - Contact page (Hindi)
+http://localhost:3000/privacy-policy - Privacy Policy
+http://localhost:3000/disclaimer - Disclaimer
+http://localhost:3000/terms-conditions - Terms & Conditions
+http://localhost:3000/razorpay - Payment page
+Protected Routes (Require Admin Login):
+
+http://localhost:3000/pooja/create - Add new Pooja
+http://localhost:3000/pooja/edit/:id - Edit Pooja
+http://localhost:3000/temple/create - Add new Temple
+http://localhost:3000/chadhava/create - Add new Chadharma
+http://localhost:3000/chadhava/edit/:id - Edit Chadharma
+http://localhost:3000/payment-history - Payment History
+http://localhost:3000/hi/payment-history - Payment History (Hindi)
+http://localhost:3000/crm/dashboard - CRM Dashboard
+http://localhost:3000/crm/contacts - CRM Contacts
+http://localhost:3000/crm/analytics - CRM Analytics
+http://localhost:3000/admin-crm - Admin CRM Dashboard
+API Documentation:
+
+http://localhost:5000/api-docs - Swagger API Docs
+
+
+
+
+
+
+
+changes for deployment
+Changes Made:
+Backend (DevYogam_BE-main):
+Created vercel.json - Vercel configuration for Node.js/Express server
+Updated app.js - Modified CORS to allow both localhost and production frontend URLs (including *.vercel.app domains)
+Frontend (DevYogam_Client-master):
+Updated src/utils/constant/Constant.jsx - Changed baseURL to use environment variable with fallback to production URL
+Created vercel.json - Configuration for React SPA routing
+Deployment Steps:
+1. Deploy Backend:
+
+bash
+cd my-project/DevYogam_BE-main
+npm i -g vercel
+vercel login
+vercel
+Then add environment variables in Vercel dashboard:
+
+MONGO_URI = Your MongoDB Atlas connection string
+CLIENT_URL = Your frontend Vercel URL
+2. Deploy Frontend:
+
+bash
+cd my-project/DevYogam_Client-master
+vercel
+Then add environment variable:
+
+REACT_APP_API_BASE_URL = Your backend Vercel URL
+3. After Deployment:
+Update the frontend's Constant.jsx with your actual backend URL (e.g., https://your-backend.vercel.app) and redeploy.
+
+Your projects are now configured for Vercel deployment with proper CORS and API connection support!
